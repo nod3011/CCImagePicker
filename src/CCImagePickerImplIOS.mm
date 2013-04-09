@@ -148,6 +148,8 @@ static CCImagePickerImplIOS* s_picker = nil;
 
 #include "CCImagePicker.h"
 
+namespace cocos2d { namespace extension {
+    
 bool CCImagePicker::canUseCamera()
 {
     return [CCImagePickerImplIOS canUseCamera];
@@ -167,3 +169,4 @@ void CCImagePicker::usePhotoLibrary()
 {
     [CCImagePickerImplIOS usePhotoLibrary];
 }
+}}

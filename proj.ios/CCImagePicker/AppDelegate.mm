@@ -21,7 +21,7 @@
     
     [self.window makeKeyAndVisible];
     
-    CCImagePicker::useCamera();
+    cocos2d::extension::CCImagePicker::useCamera();
     
     return YES;
 }

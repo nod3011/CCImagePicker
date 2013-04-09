@@ -9,8 +9,7 @@
 #ifndef __CCImagePicker__
 #define __CCImagePicker__
 
-//#include "cocos2d.h"
-//#include "ExtensionMacros.h"
+namespace cocos2d { namespace extension {
 
 class CCImagePicker
 {
@@ -20,5 +19,6 @@ public:
     static void useCamera();
     static void usePhotoLibrary();
 };
+}}
 
 #endif /* defined__CCImagePicker__) */

@@ -16,8 +16,8 @@ class CCImagePicker
 public:
     static bool canUseCamera();
     static bool canUsePhotoLibrary();
-    static void useCamera();
-    static void usePhotoLibrary();
+    static void useCamera(bool edit = false);
+    static void usePhotoLibrary(bool edit = false);
 };
 }}
 

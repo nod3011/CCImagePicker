@@ -19,7 +19,7 @@
 +(BOOL)canUsePhotoLibrary;
 
 
-+(id)useCamera;
-+(id)usePhotoLibrary;
++(id)useCamera:(BOOL)edit;
++(id)usePhotoLibrary:(BOOL)edit;
 
 @end

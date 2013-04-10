@@ -25,24 +25,24 @@ static CCImagePickerImplIOS* s_picker = nil;
     return [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary];
 }
 
-+(id)create:(UIImagePickerControllerSourceType)sourceType
++(id)create:(UIImagePickerControllerSourceType)sourceType canEdit:edit
 {
     CCImagePickerImplIOS* pIpc = [[CCImagePickerImplIOS alloc] init];
-    
+
     if(s_picker != nil)
     {
         [s_picker closeView];
     }
     s_picker = pIpc;
-    
+
     pIpc.imagePicker = [[UIImagePickerController alloc] init];
     pIpc.imagePicker.delegate = pIpc;
-    [pIpc.imagePicker setAllowsEditing:YES];
+    [pIpc.imagePicker setAllowsEditing:edit];
     [pIpc.view addSubview:pIpc.imagePicker.view];
-    
+
     UIWindow *window = nil;
     NSArray *windows = [[UIApplication sharedApplication] windows];
-    
+
     for (int i = 0; i < [windows count]; ++i)
     {
         window = [windows objectAtIndex:i];
@@ -59,7 +59,7 @@ static CCImagePickerImplIOS* s_picker = nil;
 {
 
     [self.imagePicker.view removeFromSuperview];
-    
+
     s_picker = nil;
 }
 
@@ -69,15 +69,15 @@ static CCImagePickerImplIOS* s_picker = nil;
 }
 
 
-+(id)useCamera
++(id)useCamera:(BOOL)edit
 {
-    return  [CCImagePickerImplIOS create:UIImagePickerControllerSourceTypeCamera];
+    return  [CCImagePickerImplIOS create:UIImagePickerControllerSourceTypeCamera canEdit:edit];
 
 }
 
-+(id)usePhotoLibrary
++(id)usePhotoLibrary(BOOL)edit
 {
-    return [CCImagePickerImplIOS create:UIImagePickerControllerSourceTypePhotoLibrary];
+    return [CCImagePickerImplIOS create:UIImagePickerControllerSourceTypePhotoLibrary canEdit:edit];
 }
 
 
@@ -88,7 +88,7 @@ static CCImagePickerImplIOS* s_picker = nil;
 	//[popoverController dismissPopoverAnimated:YES];
    // [self dismissViewControllerAnimated:YES completion:nil];
     [self closeView];
-    
+
     UIImage *image = [info valueForKey:UIImagePickerControllerOriginalImage];//原图
     float w = image.size.width;
     float h = image.size.height;
@@ -104,12 +104,12 @@ static CCImagePickerImplIOS* s_picker = nil;
         s = MIN(w, h);
         image = [self image:image centerInSize:CGSizeMake(s, s)];
     }
-    
+
    // hiddenView.image = image;
    // image = [self imageFromView:hiddenView];//为了发送给服务器
-    
+
   //  photoView.image = image;
-    
+
     //下面就应该变为nsdata然后传给服务器了...........以下省略N个字
 }
 
@@ -130,17 +130,17 @@ static CCImagePickerImplIOS* s_picker = nil;
 - (UIImage *) image: (UIImage *) image centerInSize: (CGSize) viewsize
 {
 	CGSize size = image.size;
-	
+
 	UIGraphicsBeginImageContext(viewsize);
 	float dwidth = (viewsize.width - size.width) / 2.0f;
 	float dheight = (viewsize.height - size.height) / 2.0f;
-	
+
 	CGRect rect = CGRectMake(dwidth, dheight, size.width, size.height);
 	[image drawInRect:rect];
-	
+
     UIImage *newimg = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-	
+
     return newimg;
 }
 
@@ -149,7 +149,7 @@ static CCImagePickerImplIOS* s_picker = nil;
 #include "CCImagePicker.h"
 
 namespace cocos2d { namespace extension {
-    
+
 bool CCImagePicker::canUseCamera()
 {
     return [CCImagePickerImplIOS canUseCamera];
@@ -160,13 +160,13 @@ bool CCImagePicker::canUsePhotoLibrary()
     return [CCImagePickerImplIOS canUsePhotoLibrary];
 }
 
-void CCImagePicker::useCamera()
+void CCImagePicker::useCamera(bool edit)
 {
-    [CCImagePickerImplIOS useCamera];
+    [CCImagePickerImplIOS useCamera:edit];
 }
 
-void CCImagePicker::usePhotoLibrary()
+void CCImagePicker::usePhotoLibrary(bool edit)
 {
-    [CCImagePickerImplIOS usePhotoLibrary];
+    [CCImagePickerImplIOS usePhotoLibrary:edit];
 }
 }}

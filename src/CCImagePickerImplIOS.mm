@@ -25,7 +25,7 @@ static CCImagePickerImplIOS* s_picker = nil;
     return [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary];
 }
 
-+(id)create:(UIImagePickerControllerSourceType)sourceType canEdit:edit
++(id)create:(UIImagePickerControllerSourceType)sourceType canEdit:(BOOL)edit
 {
     CCImagePickerImplIOS* pIpc = [[CCImagePickerImplIOS alloc] init];
 
@@ -37,7 +37,10 @@ static CCImagePickerImplIOS* s_picker = nil;
 
     pIpc.imagePicker = [[UIImagePickerController alloc] init];
     pIpc.imagePicker.delegate = pIpc;
+    if(edit)
+    {
     [pIpc.imagePicker setAllowsEditing:edit];
+    }
     [pIpc.view addSubview:pIpc.imagePicker.view];
 
     UIWindow *window = nil;
@@ -75,7 +78,7 @@ static CCImagePickerImplIOS* s_picker = nil;
 
 }
 
-+(id)usePhotoLibrary(BOOL)edit
++(id)usePhotoLibrary:(BOOL)edit
 {
     return [CCImagePickerImplIOS create:UIImagePickerControllerSourceTypePhotoLibrary canEdit:edit];
 }
@@ -90,21 +93,24 @@ static CCImagePickerImplIOS* s_picker = nil;
     [self closeView];
 
     UIImage *image = [info valueForKey:UIImagePickerControllerOriginalImage];//原图
-    float w = image.size.width;
-    float h = image.size.height;
-    if (w < 320 && h < 480) {//如果图片  宽、高都分别小于320、480  那么，直接用截好的图,因为组件会自动把图片放大
-        image = [info valueForKey:UIImagePickerControllerEditedImage];
+    if([picker allowsImageEditing])
+    {
+        float w = image.size.width;
+        float h = image.size.height;
+        if (w < 320 && h < 480) {//如果图片  宽、高都分别小于320、480  那么，直接用截好的图,因为组件会自动把图片放大
+            image = [info valueForKey:UIImagePickerControllerEditedImage];
+        }
+        else
+        {//否则 就选择较短的(宽和高比较)作为标准 以中心为基准截取正方形
+            image = [info valueForKey:UIImagePickerControllerEditedImage];
+            w = image.size.width;
+            h = image.size.height;
+            float s = 0;
+            s = MIN(w, h);
+            image = [self image:image centerInSize:CGSizeMake(s, s)];
+        }
     }
-    else
-    {//否则 就选择较短的(宽和高比较)作为标准 以中心为基准截取正方形
-        image = [info valueForKey:UIImagePickerControllerEditedImage];
-        w = image.size.width;
-        h = image.size.height;
-        float s = 0;
-        s = MIN(w, h);
-        image = [self image:image centerInSize:CGSizeMake(s, s)];
-    }
-
+    NSData *imageData = UIImagePNGRepresentation(image);
    // hiddenView.image = image;
    // image = [self imageFromView:hiddenView];//为了发送给服务器
 
@@ -160,12 +166,12 @@ bool CCImagePicker::canUsePhotoLibrary()
     return [CCImagePickerImplIOS canUsePhotoLibrary];
 }
 
-void CCImagePicker::useCamera(bool edit)
+void CCImagePicker::useCamera(void* obj,picker_callback func,bool edit)
 {
     [CCImagePickerImplIOS useCamera:edit];
 }
 
-void CCImagePicker::usePhotoLibrary(bool edit)
+void CCImagePicker::usePhotoLibrary(void* obj,picker_callback func,bool edit)
 {
     [CCImagePickerImplIOS usePhotoLibrary:edit];
 }

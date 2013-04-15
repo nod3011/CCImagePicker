@@ -10,14 +10,16 @@
 #define __CCImagePicker__
 
 namespace cocos2d { namespace extension {
+    
+    typedef void (*picker_callback)(int width,int height,char* data);
 
 class CCImagePicker
 {
 public:
     static bool canUseCamera();
     static bool canUsePhotoLibrary();
-    static void useCamera(bool edit = false);
-    static void usePhotoLibrary(bool edit = false);
+    static void useCamera(void* obj,picker_callback callback,bool edit = false);
+    static void usePhotoLibrary(void* obj,picker_callback callback,bool edit = false);
 };
 }}
 
